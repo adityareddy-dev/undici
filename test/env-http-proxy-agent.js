@@ -161,7 +161,7 @@ test('destroys all agents', async (t) => {
 })
 
 test('defaults to non-tunneled HTTP proxying for HTTP endpoints - #5093', async (t) => {
-  t = tspl(t, { plan: 3 })
+  t.plan(3)
 
   const server = await buildServer()
   const proxy = await buildProxy()
@@ -171,27 +171,29 @@ test('defaults to non-tunneled HTTP proxying for HTTP endpoints - #5093', async 
   const dispatcher = new EnvHttpProxyAgent()
   const serverUrl = `http://localhost:${server.address().port}`
 
-  try {
-    proxy.on('connect', () => {
-      t.fail('should not tunnel plain HTTP over an HTTP proxy by default')
-    })
-
-    proxy.on('request', (req) => {
-      t.strictEqual(req.url, `${serverUrl}/`)
-    })
-
-    server.on('request', (req, res) => {
-      t.strictEqual(req.url, '/')
-      res.end('ok')
-    })
-
-    const response = await fetch(serverUrl, { dispatcher })
-    t.strictEqual(await response.text(), 'ok')
-  } finally {
+  t.after(async () => {
+    await dispatcher.destroy()
+    proxy.closeAllConnections()
+    server.closeAllConnections()
     await new Promise((resolve) => proxy.close(resolve))
     await new Promise((resolve) => server.close(resolve))
-    await dispatcher.close()
-  }
+  })
+
+  proxy.on('connect', () => {
+    t.assert.fail('should not tunnel plain HTTP over an HTTP proxy by default')
+  })
+
+  proxy.on('request', (req) => {
+    t.assert.strictEqual(req.url, `${serverUrl}/`)
+  })
+
+  server.on('request', (req, res) => {
+    t.assert.strictEqual(req.url, '/')
+    res.end('ok')
+  })
+
+  const response = await fetch(serverUrl, { dispatcher })
+  t.assert.strictEqual(await response.text(), 'ok')
 })
 
 function buildServer () {
