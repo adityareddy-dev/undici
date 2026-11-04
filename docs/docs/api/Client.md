@@ -104,11 +104,13 @@ added: v1.0.0
     in controlled environments where the request source is fully trusted.
     **Default:** `true`.
   * `autoSelectFamily` {boolean} Enables a family autodetection algorithm that
-    loosely implements section 5 of [RFC 8305][]. Ignored if unsupported by the
-    current Node.js version. **Default:** `false`.
+    loosely implements section 5 of [RFC 8305][]. The built-in connector uses
+    Node.js' default when this option is omitted. **Default:**
+    [`net.getDefaultAutoSelectFamily()`][] (`true` unless changed).
   * `autoSelectFamilyAttemptTimeout` {number} The time, in milliseconds, to wait
     for a connection attempt to finish before trying the next address when
-    `autoSelectFamily` is enabled. **Default:** `250`.
+    `autoSelectFamily` is enabled. **Default:**
+    [`net.getDefaultAutoSelectFamilyAttemptTimeout()`][].
   * `allowH2` {boolean} Enables HTTP/2 support when the server assigns it a
     higher priority through ALPN negotiation. **Default:** `true`.
   * `useH2c` {boolean} _Deprecated: use h2Options.useH2c instead_ Enforces h2c (HTTP/2 cleartext) for non-HTTPS
@@ -516,6 +518,8 @@ added: v1.0.0
 
 Emitted for user errors, such as throwing inside an `onResponseError` handler.
 
+[`net.getDefaultAutoSelectFamily()`]: https://nodejs.org/api/net.html#netgetdefaultautoselectfamily
+[`net.getDefaultAutoSelectFamilyAttemptTimeout()`]: https://nodejs.org/api/net.html#netgetdefaultautoselectfamilyattempttimeout
 [RFC 7230, section 6.3.2]: https://tools.ietf.org/html/rfc7230#section-6.3.2
 [RFC 8305]: https://tools.ietf.org/html/rfc8305#section-5
 [`Agent`]: Agent.md#class-agent

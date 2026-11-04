@@ -97,11 +97,13 @@ added: v7.7.0
   * `maxResponseSize` {number} The maximum allowed response body size in bytes.
     Use `-1` to disable. **Default:** `-1`.
   * `autoSelectFamily` {boolean} Enables a family autodetection algorithm that
-    loosely implements section 5 of [RFC 8305][]. Ignored if not supported by the
-    current Node.js version.
+    loosely implements section 5 of [RFC 8305][]. The built-in connector uses
+    Node.js' default when this option is omitted. **Default:**
+    [`net.getDefaultAutoSelectFamily()`][] (`true` unless changed).
   * `autoSelectFamilyAttemptTimeout` {number} The amount of time, in
     milliseconds, to wait for a connection attempt to finish before trying the
-    next address when `autoSelectFamily` is enabled.
+    next address when `autoSelectFamily` is enabled. **Default:**
+    [`net.getDefaultAutoSelectFamilyAttemptTimeout()`][].
 
 Creates a new `H2CClient` for the given origin. The client does not connect until
 a request is queued; call [`h2cClient.connect()`](#h2cclientconnectoptions-callback)
@@ -370,6 +372,8 @@ added: v7.7.0
 Emitted for user errors, such as an error thrown from an `onResponseError`
 handler.
 
+[`net.getDefaultAutoSelectFamily()`]: https://nodejs.org/api/net.html#netgetdefaultautoselectfamily
+[`net.getDefaultAutoSelectFamilyAttemptTimeout()`]: https://nodejs.org/api/net.html#netgetdefaultautoselectfamilyattempttimeout
 [RFC 8305]: https://tools.ietf.org/html/rfc8305#section-5
 [Dispatcher Event: `'connect'`]: Dispatcher.md#event-connect
 [Dispatcher Event: `'disconnect'`]: Dispatcher.md#event-disconnect
